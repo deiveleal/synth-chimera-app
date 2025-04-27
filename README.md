@@ -1,4 +1,4 @@
-#Synth-chimera
+# Synth-chimera
 
 The Synth-chimera project aims to create a multimodal dataset for studying feature selection using genetic algorithms and Particle Swarm Optimization, utilizing a convolutional neural network as the fitness function. Also includes automatic selection of the processing unit, whether it be a GPU, Macbook's MPS, or CPU.
 
