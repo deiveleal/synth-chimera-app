@@ -1,22 +1,57 @@
-# Synth-chimera
+# Synth Chimera App
 
-The Synth-chimera project aims to create a multimodal dataset for studying feature selection using genetic algorithms and Particle Swarm Optimization, utilizing a convolutional neural network as the fitness function. Also includes automatic selection of the processing unit, whether it be a GPU, Macbook's MPS, or CPU.
+## Descrição
+O Synth Chimera App é uma aplicação desenvolvida com Streamlit que permite a geração de datasets multimodais, seleção de características e visualização de resultados. O aplicativo oferece uma interface amigável para usuários interagirem com diferentes métodos de otimização e avaliação de características.
 
-The MultimodalSyntheticDataset class is a custom dataset designed for generating synthetic multimodal data, including structured data and corresponding images. This dataset is particularly useful for machine learning tasks that require both types of data.
+## Estrutura do Projeto
+O projeto é organizado da seguinte forma:
 
-*Key Features*:
-   Initialization Parameters:
+```
+synth-chimera-app
+├── src
+│   ├── app.py                     # Ponto de entrada da aplicação Streamlit
+│   ├── pages                      # Contém as diferentes páginas do aplicativo
+│   │   ├── __init__.py            # Inicializa o pacote de páginas
+│   │   ├── dataset_generation.py   # Interface para geração de datasets
+│   │   ├── feature_selection.py    # Interface para seleção de características
+│   │   ├── results_visualization.py # Visualização dos resultados da avaliação
+│   │   └── about.py               # Informações sobre o aplicativo
+│   ├── components                  # Contém componentes reutilizáveis
+│   │   ├── __init__.py            # Inicializa o pacote de componentes
+│   │   ├── sidebar.py             # Define a barra lateral de navegação
+│   │   └── visualizations.py       # Funções para criar visualizações
+│   ├── utils                       # Contém funções utilitárias
+│   │   ├── __init__.py            # Inicializa o pacote de utilitários
+│   │   ├── generate_dataset.py     # Geração de datasets multimodais
+│   │   ├── cnn_fitness.py          # Avaliação das características
+│   │   ├── optimization.py          # Algoritmos de otimização
+│   │   ├── device_detection.py      # Detecção de dispositivos disponíveis
+│   │   └── save_dataset.py         # Função para salvar resultados em Excel
+│   └── models                      # Contém modelos (se necessário)
+│       └── __init__.py            # Inicializa o pacote de modelos
+├── requirements.txt                # Dependências do projeto
+├── .gitignore                      # Arquivos a serem ignorados pelo controle de versão
+└── README.md                       # Documentação do projeto
+```
 
-   num_samples: Total number of samples in the dataset.
+## Instalação
+Para instalar as dependências do projeto, execute o seguinte comando:
 
-   num_features: Number of features for the structured data.
+```
+pip install -r requirements.txt
+```
 
-   image_size: Size of the generated images.
+## Uso
+Para iniciar a aplicação, execute o seguinte comando:
 
-   num_classes: Number of distinct classes in the dataset.
+```
+streamlit run src/app.py
+```
 
-*Data Generation*:
+Acesse a aplicação no seu navegador através do endereço indicado no terminal.
 
-   *Structured Data*: Generated within specific ranges for each feature and label. The features are divided into two groups: the first half has values within class-specific ranges, aims to create random values within established patterns by class and feature, as simulating laboratory test indicators, while the second half has values within a broader range, creating noisy features.
+## Contribuição
+Contribuições são bem-vindas! Sinta-se à vontade para abrir issues ou pull requests.
 
-   *Image Data*: Synthetic images are generated with simple patterns and colors based on the label. Each image contains a circle whose size and color are determined by the label.
+## Licença
+Este projeto está licenciado sob a MIT License. Veja o arquivo LICENSE para mais detalhes.

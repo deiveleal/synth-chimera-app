@@ -1,0 +1,112 @@
+synth_chimera/                       # Pacote principal (nome usando snake_case)
+├── pyproject.toml                   # Configuração moderna do projeto (PEP 621)
+├── setup.py                         # Script de instalação (compatibilidade)
+├── README.md                        # Documentação principal
+├── CHANGELOG.md                     # Registro de alterações
+├── LICENSE                          # Arquivo de licença
+├── requirements.txt                 # Dependências do projeto
+├── requirements-dev.txt             # Dependências de desenvolvimento
+├── docs/                            # Documentação detalhada
+│   ├── index.md                     # Página inicial da documentação
+│   └── api/                         # Documentação da API
+├── synth_chimera/                   # Código-fonte (mesmo nome do pacote)
+│   ├── __init__.py                  # Exporta a API pública
+│   ├── __main__.py                  # Ponto de entrada para execução como módulo
+│   ├── config/                      # Configurações do aplicativo
+│   │   ├── __init__.py
+│   │   └── settings.py              # Configurações centralizadas
+│   ├── core/                        # Lógica central e abstrações
+│   │   ├── __init__.py
+│   │   ├── base_models.py           # Classes base abstratas 
+│   │   └── exceptions.py            # Exceções personalizadas
+│   ├── data/                        # Manipulação de dados
+│   │   ├── __init__.py
+│   │   ├── dataset_generator.py     # Geração de datasets
+│   │   └── data_processor.py        # Processamento de dados
+│   ├── features/                    # Relacionado à seleção de características
+│   │   ├── __init__.py
+│   │   ├── selection.py             # Algoritmos de seleção
+│   │   ├── evaluation.py            # Avaliação de características
+│   │   └── optimization.py          # Algoritmos de otimização
+│   ├── models/                      # Modelos de machine learning
+│   │   ├── __init__.py
+│   │   └── cnn.py                   # Modelos CNN
+│   ├── utils/                       # Utilitários gerais
+│   │   ├── __init__.py
+│   │   ├── device.py                # Detecção de dispositivos
+│   │   └── io.py                    # Operações de entrada/saída
+│   ├── visualization/               # Visualização de dados
+│   │   ├── __init__.py
+│   │   └── plots.py                 # Funções de plotagem
+│   └── web/                         # Interface web (Streamlit)
+│       ├── __init__.py
+│       ├── app.py                   # Aplicação principal
+│       ├── components/              # Componentes reutilizáveis
+│       │   ├── __init__.py
+│       │   └── sidebar.py           # Componente de barra lateral
+│       └── pages/                   # Páginas da aplicação
+│           ├── __init__.py
+│           ├── dataset_page.py      # Página de geração de dataset
+│           ├── feature_page.py      # Página de seleção de características
+│           ├── results_page.py      # Página de visualização de resultados
+│           └── about_page.py        # Página sobre o projeto
+├── tests/                           # Testes automatizados
+│   ├── __init__.py
+│   ├── conftest.py                  # Configurações para pytest
+│   ├── test_data/                   # Dados para testes
+│   ├── unit/                        # Testes unitários
+│   │   ├── __init__.py
+│   │   ├── test_dataset_generator.py
+│   │   └── test_feature_selection.py
+│   └── integration/                 # Testes de integração
+│       ├── __init__.py
+│       └── test_web_app.py
+└── scripts/                         # Scripts úteis
+    ├── lint.sh                      # Script para verificar o código
+    └── release.sh                   # Script para publicar novas versões
+
+arquivo pyproject.toml
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.black]
+line-length = 88
+target-version = ['py38', 'py39', 'py310']
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+line_length = 88
+
+[tool.mypy]
+python_version = "3.8"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+
+arquivo setup.py
+
+from setuptools import setup, find_packages
+
+setup(
+    name="synth_chimera",
+    version="0.1.0",
+    packages=find_packages(),
+    include_package_data=True,
+    install_requires=[
+        "streamlit",
+        "torch",
+        "pandas",
+        "numpy",
+        "matplotlib",
+        "scikit-learn",
+        "openpyxl",
+    ],
+    python_requires=">=3.8",
+)
