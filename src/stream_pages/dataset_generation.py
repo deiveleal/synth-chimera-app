@@ -134,7 +134,7 @@
 # if __name__ == "__main__":
 #     DatasetGenerationPage()
 import streamlit as st
-import pandas as pd
+import pandas as pd # type: ignore
 import numpy as np
 
 class DatasetGenerationPage:
