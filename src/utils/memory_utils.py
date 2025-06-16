@@ -13,6 +13,7 @@ def clear_gpu_memory():
     if torch.cuda.is_available():
         # Libera todas as alocações CUDA
         torch.cuda.empty_cache()
+        torch.cuda.ipc_collect()
         
         # Força sincronização de todas as streams
         torch.cuda.synchronize()
