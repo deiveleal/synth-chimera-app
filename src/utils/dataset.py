@@ -6,9 +6,11 @@ from PIL import Image, ImageDraw, ImageFilter, ImageEnhance # type: ignore
 from torchvision.transforms import ToTensor  # type: ignore
 from .device_detection import get_available_device
 
+
 device = get_available_device()
 print(f"Dataset using device: {device}")
 
+# Dataset for generating synthetic multimodal data with images and numerical features
 class MultimodalSyntheticDataset(Dataset):
     def __init__(
             self, num_samples=500, 
@@ -23,15 +25,15 @@ class MultimodalSyntheticDataset(Dataset):
             circle_size_variation_ratio=0.05,
             num_distractor_objects=3, 
             distractor_max_size_ratio=0.1,
-            background_noise_std=0.7, # New: Background noise level (0-1, std dev)
-            apply_blur=False, # New: Apply Gaussian blur
-            blur_radius_range=(0.5, 1.5), # New: Blur radius range
-            apply_brightness_contrast=False, # New: Apply brightness/contrast adjustment
-            brightness_factor_range=(0.7, 1.3), # New: Brightness factor range
-            contrast_factor_range=(0.7, 1.3), # New: Contrast factor range
-            enable_multimodal_image_relations=False, # New: Enable multimodal image relations
-            multimodal_feature_idx=0, # New: Index of numerical feature for relation
-            multimodal_visibility_threshold=0.5 # New: Threshold for conditional visibility
+            background_noise_std=0.7,
+            apply_blur=False,
+            blur_radius_range=(0.5, 1.5),
+            apply_brightness_contrast=False,
+            brightness_factor_range=(0.7, 1.3),
+            contrast_factor_range=(0.7, 1.3),
+            enable_multimodal_image_relations=False,
+            multimodal_feature_idx=0,
+            multimodal_visibility_threshold=0.5
             ):
         super().__init__()
         self.num_samples = num_samples
@@ -39,7 +41,6 @@ class MultimodalSyntheticDataset(Dataset):
         self.image_size = image_size
         self.num_classes = num_classes
 
-        # Parameters for image complexity
         self.vary_circle_position = vary_circle_position
         self.circle_position_max_offset_ratio = circle_position_max_offset_ratio
         self.vary_circle_color = vary_circle_color
@@ -49,7 +50,6 @@ class MultimodalSyntheticDataset(Dataset):
         self.num_distractor_objects = num_distractor_objects
         self.distractor_max_size_ratio = distractor_max_size_ratio
 
-        # Parameters for background noise, augmentations, and multimodal relations
         self.background_noise_std = background_noise_std
         self.apply_blur = apply_blur
         self.blur_radius_range = blur_radius_range
@@ -74,10 +74,9 @@ class MultimodalSyntheticDataset(Dataset):
         if self.enable_multimodal_image_relations and self.multimodal_feature_idx >= num_features:
             raise ValueError("multimodal_feature_idx must be less than num_features")
 
-        # Generate data components
-        self.labels = self._generate_labels() # Generate labels first
-        self.numerical_features = self._generate_numerical_features() # Then numerical features (can depend on labels if needed in future)
-        self.images = self._generate_images() # Then images (can depend on labels and numerical_features)
+        self.labels = self._generate_labels()
+        self.numerical_features = self._generate_numerical_features()
+        self.images = self._generate_images()
 
     def _generate_labels(self):
         """Generates labels for the dataset."""
@@ -95,27 +94,19 @@ class MultimodalSyntheticDataset(Dataset):
         samples_per_class = self.num_samples // self.num_classes
 
         for _class in range(self.num_classes):
-            # print(f'Generating features for label {_class}') # Optional: for debugging
-            # Creating specific random intervals for each features in classes
-            # This logic assumes self.labels is already populated if ranges depend on class,
-            # but here ranges_classes depends only on _class and num_features.
             ranges_classes = [((_class * (self.num_features // 2) + feature), 
                                (_class * (self.num_features // 2) + feature) + 0.95) 
                               for feature in range(self.num_features // 2)]
-            # print(f"Ranges {ranges_classes} ") # Optional: for debugging
             
             for i in range(samples_per_class):
                 sample_index = _class * samples_per_class + i
-                # self.labels[sample_index] = _class # This is now done in _generate_labels
 
                 for feat in range(self.num_features):
                     if feat < (self.num_features // 2):
-                        # Ensure that the feature index for ranges_classes is within bounds
                         range_idx = feat 
                         range_start, range_finish = ranges_classes[range_idx]
                         structured_data_array[sample_index, feat] = round(np.random.uniform(range_start, range_finish), 2)
                     else:
-                        # For the second half of features, generate random uniform data
                         structured_data_array[sample_index, feat] = round(np.random.uniform(100, 100000), 2)
         return structured_data_array
 
@@ -133,10 +124,8 @@ class MultimodalSyntheticDataset(Dataset):
 
         images = []
         for sample_idx, label_value in enumerate(self.labels):
-            # Create base image (white background)
             img_array = np.full((self.image_size[1], self.image_size[0], 3), 255, dtype=np.uint8)
 
-            # Add background noise if specified
             if self.background_noise_std > 0:
                 noise = np.random.normal(0, self.background_noise_std * 255, img_array.shape)
                 img_array = np.clip(img_array + noise, 0, 255).astype(np.uint8)
@@ -144,14 +133,11 @@ class MultimodalSyntheticDataset(Dataset):
             img = Image.fromarray(img_array)
             draw = ImageDraw.Draw(img)
 
-            # --- Determine if the Main Informative Circle should be drawn ---
-            draw_main_circle = True # Assume it will be drawn by default
+            draw_main_circle = True 
             if self.enable_multimodal_image_relations:
-                # Conditional visibility based on a numerical feature
                 if self.numerical_features[sample_idx, self.multimodal_feature_idx] < self.multimodal_visibility_threshold:
                     draw_main_circle = False
             
-            # --- Main Informative Circle ---
             if draw_main_circle:
                 base_color_val = norm_uniq_labels_colors[label_value]
                 current_color_val = base_color_val
@@ -184,7 +170,6 @@ class MultimodalSyntheticDataset(Dataset):
                 y1 = y0 + current_diameter
                 draw.ellipse((x0, y0, x1, y1), fill=circle_fill_color)
             
-            # --- Distractor Objects ---
             if self.num_distractor_objects > 0:
                 max_distractor_size = int(self.image_size[0] * self.distractor_max_size_ratio)
                 min_distractor_size = max(3, int(max_distractor_size * 0.2))
@@ -199,7 +184,6 @@ class MultimodalSyntheticDataset(Dataset):
                         fill=distractor_color
                     )
             
-            # --- Image Augmentations ---
             if self.apply_blur:
                 blur_radius = np.random.uniform(self.blur_radius_range[0], self.blur_radius_range[1])
                 img = img.filter(ImageFilter.GaussianBlur(radius=blur_radius))
@@ -213,13 +197,6 @@ class MultimodalSyntheticDataset(Dataset):
                 enhancer = ImageEnhance.Contrast(img)
                 img = enhancer.enhance(contrast_factor)
 
-            # The following block was moved up to correctly control circle drawing
-            # if self.enable_multimodal_image_relations:
-            #     # Conditional visibility based on a numerical feature
-            #     # Ensure self.numerical_features is used here
-            #     if self.numerical_features[sample_idx, self.multimodal_feature_idx] < self.multimodal_visibility_threshold:
-            #         draw_main_circle = False
-
             images.append(ToTensor()(img).numpy())
 
         return np.array(images, dtype=np.float32)
@@ -229,8 +206,8 @@ class MultimodalSyntheticDataset(Dataset):
 
     def __getitem__(self, idx):
         return (
-            torch.tensor(self.numerical_features[idx], device=device), # Use self.numerical_features
-            torch.tensor(self.images[idx], device=device), # Use self.images
+            torch.tensor(self.numerical_features[idx], device=device),
+            torch.tensor(self.images[idx], device=device),
             torch.tensor(self.labels[idx], device=device),
         )
 
