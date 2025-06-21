@@ -51,11 +51,11 @@ def main():
     # User inputs for dataset generation
     st.sidebar.subheader("Dataset Generation Parameters")
     n_samples_input = st.sidebar.number_input(
-        "Number of Records:", min_value=1, value=st.session_state.get('n_samples_generated', 2500))
+        "Number of Records:", min_value=1, value=st.session_state.get('n_samples_generated', 3000))
     n_features_input = st.sidebar.number_input(
         "Number of Features (Even Number - Except Image):", min_value=2, value=st.session_state.get('n_features_generated', 10))
-    n_classes_input = st.sidebar.number_input(
-        "Number of Classes(Number of records must be divisible):", min_value=1, value=st.session_state.get('n_classes_generated', 5))
+    n_classes_input = st.sidebar.slider(
+    "Number of Classes (max 7):", min_value=2, max_value=7, value=st.session_state.get('n_classes_generated', 5))
 
     if st.sidebar.button("Generate Dataset"):
         if n_samples_input > 0 and n_features_input > 0 and n_classes_input > 0:
