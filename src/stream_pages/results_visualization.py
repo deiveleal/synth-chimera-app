@@ -265,3 +265,82 @@ class ResultsVisualizationPage:
         if not (self.ga_results and 'best_solution_vector' in self.ga_results) and \
            not (self.pso_results and 'best_solution_vector' in self.pso_results):
              st.write("Nenhum detalhe de seleção de features para exibir.")
+
+        # Tabela com todos os dados coletados
+        st.markdown("---")
+        st.subheader("Tabela Completa de Dados Coletados")
+
+        # Criar DataFrame com todos os dados históricos
+        all_data = []
+
+        if self.ga_results and 'history' in self.ga_results:
+            ga_history = self.ga_results['history']
+            max_len_ga = max([len(ga_history.get(key, [])) for key in ga_history.keys()] + [0])
+            
+            for i in range(max_len_ga):
+                row = {
+                    'Algoritmo': 'GA',
+                    'Geração/Iteração': i,
+                    'Fitness Global': ga_history.get('fitness_overall', [])[i] if i < len(ga_history.get('fitness_overall', [])) else None,
+                    'Fitness da Época': ga_history.get('fitness_epoch', [])[i] if i < len(ga_history.get('fitness_epoch', [])) else None,
+                    'Fitness Médio da Época': ga_history.get('avg_fitness_epoch', [])[i] if i < len(ga_history.get('avg_fitness_epoch', [])) else None,
+                    'Features Selecionadas': ga_history.get('features_count', [])[i] if i < len(ga_history.get('features_count', [])) else None
+                }
+                all_data.append(row)
+
+        if self.pso_results and 'history' in self.pso_results:
+            pso_history = self.pso_results['history']
+            max_len_pso = max([len(pso_history.get(key, [])) for key in pso_history.keys()] + [0])
+            
+            for i in range(max_len_pso):
+                row = {
+                    'Algoritmo': 'PSO',
+                    'Geração/Iteração': i,
+                    'Fitness Global': pso_history.get('fitness_overall', [])[i] if i < len(pso_history.get('fitness_overall', [])) else None,
+                    'Fitness da Época': pso_history.get('fitness_epoch', [])[i] if i < len(pso_history.get('fitness_epoch', [])) else None,
+                    'Fitness Médio da Época': pso_history.get('avg_fitness_epoch', [])[i] if i < len(pso_history.get('avg_fitness_epoch', [])) else None,
+                    'Features Selecionadas': pso_history.get('features_count', [])[i] if i < len(pso_history.get('features_count', [])) else None
+                }
+                all_data.append(row)
+
+        if all_data:
+            df_all_data = pd.DataFrame(all_data)
+            
+            # Filtrar dados por algoritmo
+            algorithm_filter = st.selectbox("Filtrar por Algoritmo:", ["Todos", "GA", "PSO"])
+            
+            if algorithm_filter != "Todos":
+                df_filtered = df_all_data[df_all_data['Algoritmo'] == algorithm_filter]
+            else:
+                df_filtered = df_all_data
+            
+            # Mostrar estatísticas básicas
+            if not df_filtered.empty:
+                st.markdown("**Estatísticas dos Dados:**")
+                cols_stats = st.columns(3)
+                with cols_stats[0]:
+                    st.metric("Total de Registros", len(df_filtered))
+                with cols_stats[1]:
+                    if 'Fitness Global' in df_filtered.columns:
+                        max_fitness = df_filtered['Fitness Global'].max()
+                        st.metric("Melhor Fitness Global", f"{max_fitness:.4f}" if pd.notna(max_fitness) else "N/A")
+                with cols_stats[2]:
+                    if 'Features Selecionadas' in df_filtered.columns:
+                        avg_features = df_filtered['Features Selecionadas'].mean()
+                        st.metric("Média de Features", f"{avg_features:.1f}" if pd.notna(avg_features) else "N/A")
+                
+                # Exibir tabela
+                st.dataframe(df_filtered, use_container_width=True, height=400)
+                
+                # Opção para download
+                csv = df_filtered.to_csv(index=False)
+                st.download_button(
+                    label="📥 Baixar dados como CSV",
+                    data=csv,
+                    file_name=f"dados_execucao_{algorithm_filter.lower()}.csv",
+                    mime="text/csv"
+                )
+            else:
+                st.write("Nenhum dado disponível para o filtro selecionado.")
+        else:
+            st.write("Nenhum dado histórico disponível para exibir.")

@@ -63,7 +63,7 @@ class FeatureSelectionPage:
                     crossover_rate=0.8,
                     use_image_data=self.use_image_for_evaluation,
                     device=self.device,
-                    fitness_fn_epochs=7
+                    fitness_fn_epochs=12
                 )
 
             ga_results = ga_raw_results_dict
@@ -117,11 +117,11 @@ class FeatureSelectionPage:
                     n_particles=int(num_part),
                     n_iterations=int(num_iter),
                     w=0.5,
-                    c1=1.5,
-                    c2=1.5,
+                    c1=3.0,
+                    c2= 3.0,
                     use_image_data=self.use_image_for_evaluation,
                     device=self.device,
-                    fitness_fn_epochs=7
+                    fitness_fn_epochs=12
                 )
 
             pso_results = pso_raw_results_dict

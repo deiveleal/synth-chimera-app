@@ -32,7 +32,7 @@ class MultimodalSyntheticDataset(Dataset):
             apply_brightness_contrast=True,
             brightness_factor_range=(0.7, 1.3),
             contrast_factor_range=(0.7, 1.3),
-            enable_multimodal_image_relations=False,
+            enable_multimodal_image_relations=True,
             multimodal_feature_idx=0,
             multimodal_visibility_threshold=0.5
             ):
