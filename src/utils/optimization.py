@@ -9,6 +9,9 @@ def genetic_algorithm(
     X_num_tensor: torch.Tensor, 
     X_img_tensor: torch.Tensor, 
     y_tensor: torch.Tensor,
+    X_num_val: torch.Tensor,        # <-- Adicionar
+    X_img_val: torch.Tensor,        # <-- Adicionar
+    y_val: torch.Tensor,            # <-- Adicionar
     fitness_fn: Callable, 
     n_features: int, 
     n_population: int, 
@@ -47,9 +50,12 @@ def genetic_algorithm(
         individual = population[i]
         fitness = fitness_fn(
             individual_mask=individual if n_features > 0 else None,
-            X_num_original=X_num_tensor if n_features > 0 else None,
-            X_img_tensor=X_img_tensor if use_image_data else None,
-            y_tensor=y_tensor, 
+            X_num_train=X_num_tensor if n_features > 0 else None,     # <- CORRIGIDO
+            X_img_train=X_img_tensor if use_image_data else None,     # <- CORRIGIDO
+            y_train=y_tensor,                                         # <- CORRIGIDO
+            X_num_val=X_num_val if n_features > 0 else None,         # <- NOVO
+            X_img_val=X_img_val if use_image_data else None,         # <- NOVO
+            y_val=y_val,                                             # <- NOVO
             device=device, 
             epochs=fitness_fn_epochs,
             algorithm_id="GA"
@@ -85,9 +91,12 @@ def genetic_algorithm(
             individual = population[i]
             fitness = fitness_fn(
                 individual_mask=individual if n_features > 0 else None,
-                X_num_original=X_num_tensor if n_features > 0 else None,
-                X_img_tensor=X_img_tensor if use_image_data else None,
-                y_tensor=y_tensor, 
+                X_num_train=X_num_tensor if n_features > 0 else None,     # <- CORRIGIDO
+                X_img_train=X_img_tensor if use_image_data else None,     # <- CORRIGIDO
+                y_train=y_tensor,                                         # <- CORRIGIDO
+                X_num_val=X_num_val if n_features > 0 else None,         # <- NOVO
+                X_img_val=X_img_val if use_image_data else None,         # <- NOVO
+                y_val=y_val,                                             # <- NOVO
                 device=device, 
                 epochs=fitness_fn_epochs,
                 algorithm_id="GA"
@@ -167,6 +176,9 @@ def particle_swarm_optimization(
     X_num_tensor: torch.Tensor, 
     X_img_tensor: torch.Tensor, 
     y_tensor: torch.Tensor,
+    X_num_val: torch.Tensor,        # <- ADICIONAR
+    X_img_val: torch.Tensor,        # <- ADICIONAR
+    y_val: torch.Tensor,            # <- ADICIONAR
     fitness_fn: Callable, 
     n_features: int, 
     n_particles: int, 
@@ -209,9 +221,12 @@ def particle_swarm_optimization(
     for i in range(n_particles):
         fitness = fitness_fn(
             individual_mask=particles_position[i] if n_features > 0 else None,
-            X_num_original=X_num_tensor if n_features > 0 else None,
-            X_img_tensor=X_img_tensor if use_image_data else None,
-            y_tensor=y_tensor, 
+            X_num_train=X_num_tensor if n_features > 0 else None,     # <- CORRIGIDO
+            X_img_train=X_img_tensor if use_image_data else None,     # <- CORRIGIDO
+            y_train=y_tensor,                                         # <- CORRIGIDO
+            X_num_val=X_num_val if n_features > 0 else None,         # <- NOVO
+            X_img_val=X_img_val if use_image_data else None,         # <- NOVO
+            y_val=y_val,                                             # <- NOVO
             device=device, 
             epochs=fitness_fn_epochs,
             algorithm_id="PSO"
@@ -270,9 +285,12 @@ def particle_swarm_optimization(
 
             fitness = fitness_fn(
                 individual_mask=particles_position[i] if n_features > 0 else None,
-                X_num_original=X_num_tensor if n_features > 0 else None,
-                X_img_tensor=X_img_tensor if use_image_data else None,
-                y_tensor=y_tensor, 
+                X_num_train=X_num_tensor if n_features > 0 else None,     # <- CORRIGIDO
+                X_img_train=X_img_tensor if use_image_data else None,     # <- CORRIGIDO
+                y_train=y_tensor,                                         # <- CORRIGIDO
+                X_num_val=X_num_val if n_features > 0 else None,         # <- NOVO
+                X_img_val=X_img_val if use_image_data else None,         # <- NOVO
+                y_val=y_val,                                             # <- NOVO
                 device=device, 
                 epochs=fitness_fn_epochs,
                 algorithm_id="PSO"
