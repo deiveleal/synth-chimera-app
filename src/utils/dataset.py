@@ -34,7 +34,7 @@ class MultimodalSyntheticDataset(Dataset):
             contrast_factor_range=(0.7, 1.3),
             enable_multimodal_image_relations=True,
             multimodal_feature_idx=0,
-            multimodal_visibility_threshold=0.5
+            multimodal_visibility_threshold=0.1
             ):
         super().__init__()
         self.num_samples = num_samples

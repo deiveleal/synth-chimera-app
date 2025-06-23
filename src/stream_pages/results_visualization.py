@@ -268,7 +268,11 @@ class ResultsVisualizationPage:
 
         # Tabela com todos os dados coletados
         st.markdown("---")
-        st.subheader("Tabela Completa de Dados Coletados")
+        st.subheader("Tabela Resumo do Experimento")
+        
+        # Adicionar informação sobre validação no cabeçalho
+        st.info("📊 Todas as métricas de fitness foram calculadas usando dados de validação")
+ 
 
         # Criar DataFrame com todos os dados históricos
         all_data = []
