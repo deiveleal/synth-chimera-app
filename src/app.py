@@ -270,7 +270,7 @@ def main():
     # User inputs for dataset generation
     st.sidebar.subheader("Dataset Generation Parameters")
     n_samples_input = st.sidebar.number_input(
-        "Number of Records:", min_value=1, value=3000)
+        "Number of Records:", min_value=1, value=2500)
     n_features_input = st.sidebar.number_input(
         "Number of Features (Even Number - Except Image):", min_value=2, value=10, step=2)
     n_classes_input = st.sidebar.number_input(
